@@ -232,7 +232,7 @@ class _MyHomePageState extends State<FormularioPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Probabilidade",
+                                    "Gravidade",
                                     style: DefaultTheme.headerInput.copyWith(
                                         fontSize: 12,
                                         color: DefaultColors.primary[500]),
