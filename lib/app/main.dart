@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ptmol/app/pages/formulario.dart';
+import 'package:ptmol/app/pages/introduction_page.dart';
 import 'package:ptmol/theme/colors/default_colors.dart';
-import '../theme/default_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         unselectedWidgetColor: DefaultColors.primary[500],
       ),
-      home: const FormularioPage(),
+      home: const IntroductionPage(),
     );
   }
 }
