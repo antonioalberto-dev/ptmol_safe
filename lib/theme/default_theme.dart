@@ -17,6 +17,13 @@ class DefaultTheme {
     height: 1.0,
   );
 
+  static TextStyle subtitle2Medium = GoogleFonts.montserrat(
+    fontSize: 16,
+    color: DefaultColors.primary[500],
+    fontWeight: FontWeight.bold,
+    height: 1.0,
+  );
+
   static TextStyle headerInput = GoogleFonts.montserrat(
     fontSize: 14,
     fontWeight: FontWeight.bold,
@@ -30,6 +37,11 @@ class DefaultTheme {
 
   static TextStyle text = GoogleFonts.montserrat(
     fontSize: 14,
+    color: Colors.black,
+  );
+
+  static TextStyle textOnboarding = GoogleFonts.montserrat(
+    fontSize: 15,
     color: Colors.black,
   );
 
