@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ptmol/app/pages/ativo_detalhe_page.dart';
 import 'package:ptmol/theme/colors/default_colors.dart';
 
+import '../../model/ativo.dart';
 import '../../model/checkbox_model.dart';
 import '../../theme/default_theme.dart';
 import '../widgets/header_form.dart';
 import '../widgets/item_formulario.dart';
-import '../widgets/ptmol_button.dart';
 import '../widgets/ptmol_text_field.dart';
 
 class FormularioPage extends StatefulWidget {
@@ -39,17 +39,27 @@ class _MyHomePageState extends State<FormularioPage> {
     "Textual",
     "Multimídia",
     "Geográfico",
-    "Dado de uso",
-    "Dado de relacionamento",
+    "Dados de uso",
+    "Dados de relacionamento",
   ];
   final dropValueProbabilidade = ValueNotifier('');
   final dropValueGravidade = ValueNotifier('');
   final dropValueRiscos = ["Alta", "Média", "Baixa"];
 
+  List<String> ameacas = [];
+
+  TextEditingController ativoController = TextEditingController();
+  String? classificao;
+  TextEditingController usosMaliciososController = TextEditingController();
+  String? gravidade;
+  String? probabilidade;
+  TextEditingController alertasController = TextEditingController();
+  TextEditingController contramedidasController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    var widthRisk = MediaQuery.of(context).size.width * 0.42;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       drawer: const Drawer(),
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -62,7 +72,8 @@ class _MyHomePageState extends State<FormularioPage> {
             children: [
               const HeaderForm(
                 title: "Modelagem de ameaças",
-                subtitle: "Identifique os ativos, as ameaças e as contramedidas",
+                subtitle:
+                    "Identifique os ativos, as ameaças e as contramedidas",
               ),
               Form(
                 child: Padding(
@@ -70,11 +81,12 @@ class _MyHomePageState extends State<FormularioPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const ItemFormulario(
+                      ItemFormulario(
                         labelText: "Informe o ativo",
                         item: PtmolTextField(
                           hintText: "O que deve ser protegido?",
                           maxLines: 1,
+                          controller: ativoController,
                         ),
                       ),
                       ItemFormulario(
@@ -99,8 +111,11 @@ class _MyHomePageState extends State<FormularioPage> {
                                 hint: Text("Selecione",
                                     style: DefaultTheme.hintStyle),
                                 value: (value.isEmpty) ? null : value,
-                                onChanged: (escolha) => dropValueClassificacao
-                                    .value = escolha.toString(),
+                                onChanged: (escolha) {
+                                  dropValueClassificacao.value =
+                                      escolha.toString();
+                                  classificao = escolha.toString();
+                                },
                                 items: dropOpcoesClassificacao
                                     .map((opcao) => DropdownMenuItem(
                                           value: opcao,
@@ -123,7 +138,8 @@ class _MyHomePageState extends State<FormularioPage> {
                               (item) => CheckboxListTile(
                                 dense: true,
                                 contentPadding: EdgeInsets.zero,
-                                controlAffinity: ListTileControlAffinity.leading,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                                 checkboxShape: const CircleBorder(),
                                 value: item.value,
                                 activeColor: DefaultColors.primary[500],
@@ -145,7 +161,8 @@ class _MyHomePageState extends State<FormularioPage> {
                               (item) => CheckboxListTile(
                                 dense: true,
                                 contentPadding: EdgeInsets.zero,
-                                controlAffinity: ListTileControlAffinity.leading,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                                 checkboxShape: const CircleBorder(),
                                 value: item.value,
                                 activeColor: DefaultColors.primary[500],
@@ -159,18 +176,19 @@ class _MyHomePageState extends State<FormularioPage> {
                           ],
                         ),
                       ),
-                      const ItemFormulario(
+                      ItemFormulario(
                         labelText: "Usos maliciosos",
                         item: PtmolTextField(
                           hintText:
                               "O que pode afetar a privacidade do usuário? ",
                           maxLines: 3,
+                          controller: usosMaliciososController,
                         ),
                       ),
                       ItemFormulario(
                         labelText: "Riscos",
                         item: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             ValueListenableBuilder(
                               valueListenable: dropValueProbabilidade,
@@ -186,8 +204,7 @@ class _MyHomePageState extends State<FormularioPage> {
                                     ),
                                     const SizedBox(height: 5),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.30,
+                                      width: widthRisk,
                                       child: DropdownButtonFormField(
                                         decoration: InputDecoration(
                                           hintStyle: DefaultTheme.hintStyle,
@@ -206,9 +223,11 @@ class _MyHomePageState extends State<FormularioPage> {
                                         hint: Text("Selecione",
                                             style: DefaultTheme.hintStyle),
                                         value: (value.isEmpty) ? null : value,
-                                        onChanged: (escolha) =>
-                                            dropValueProbabilidade.value =
-                                                escolha.toString(),
+                                        onChanged: (escolha) {
+                                          dropValueProbabilidade.value =
+                                              escolha.toString();
+                                          probabilidade = escolha;
+                                        },
                                         items: dropValueRiscos
                                             .map((opcao) => DropdownMenuItem(
                                                   value: opcao,
@@ -242,8 +261,7 @@ class _MyHomePageState extends State<FormularioPage> {
                                     ),
                                     const SizedBox(height: 5),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.30,
+                                      width: widthRisk,
                                       child: DropdownButtonFormField(
                                         decoration: InputDecoration(
                                           hintStyle: DefaultTheme.hintStyle,
@@ -262,8 +280,11 @@ class _MyHomePageState extends State<FormularioPage> {
                                         hint: Text("Selecione",
                                             style: DefaultTheme.hintStyle),
                                         value: (value.isEmpty) ? null : value,
-                                        onChanged: (escolha) => dropValueGravidade
-                                            .value = escolha.toString(),
+                                        onChanged: (escolha) {
+                                          dropValueGravidade.value =
+                                              escolha.toString();
+                                          gravidade = escolha;
+                                        },
                                         items: dropValueRiscos
                                             .map((opcao) => DropdownMenuItem(
                                                   value: opcao,
@@ -286,25 +307,69 @@ class _MyHomePageState extends State<FormularioPage> {
                           ],
                         ),
                       ),
-                      const ItemFormulario(
+                      ItemFormulario(
                         labelText: "Alertas de prevenção",
                         item: PtmolTextField(
                           hintText:
                               "Que alerta poderia ser emitido para informar o usuário sobre consequências para a sua privacidade?",
                           maxLines: 3,
+                          controller: alertasController,
                         ),
                       ),
-                      const ItemFormulario(
+                      ItemFormulario(
                         labelText: "Contramedidas",
                         item: PtmolTextField(
                           hintText:
                               "Qual estratégia adotar para mitigar as ameaças?",
                           maxLines: 3,
+                          controller: contramedidasController,
                         ),
                       ),
-                      PtmolButton(
-                        function: () {},
-                        label: "Exportar dados",
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => AtivoDetalhe(
+                                ativo: Ativo(
+                                  ativo: ativoController.text,
+                                  classificacao: classificao,
+                                  usosMaciliciosos:
+                                      usosMaliciososController.text,
+                                  contramedidas: contramedidasController.text,
+                                  risco: Risco(
+                                      gravidade: gravidade,
+                                      probabilidade: probabilidade),
+                                  alertasPrevencao: alertasController.text,
+                                  ameacas: listAmeacas,
+                                  fontesVazamento: listFontesVazamento,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          foregroundColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.pressed)) {
+                                return Colors.white;
+                              }
+                              return Colors.white;
+                            },
+                          ),
+                          backgroundColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.pressed)) {
+                                return DefaultColors.success;
+                              }
+                              return DefaultColors.success;
+                            },
+                          ),
+                        ),
+                        child: Center(
+                            child: Text(
+                          "Finalizar inspeção",
+                          style: DefaultTheme.button,
+                        )),
                       ),
                       const SizedBox(height: 30),
                     ],

@@ -4,11 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:ptmol/app/pages/ativo_detalhe_page.dart';
 import 'package:ptmol/app/pages/formulario_page.dart';
 import 'package:ptmol/theme/default_theme.dart';
 import 'package:ptmol/theme/ui_theme.dart';
 
-class IntroductionPage extends StatelessWidget {
+class IntroductionPage extends StatefulWidget {
+  const IntroductionPage({Key? key}) : super(key: key);
+
+  @override
+  State<IntroductionPage> createState() => _IntroductionPageState();
+}
+
+class _IntroductionPageState extends State<IntroductionPage> {
   List<PageViewModel> getPages() {
     return [
       PageViewModel(
@@ -21,6 +29,7 @@ class IntroductionPage extends StatelessWidget {
           bodyTextStyle: DefaultTheme.textOnboarding,
           titleTextStyle: DefaultTheme.subtitle2Medium,
           imagePadding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
+          bodyPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
       PageViewModel(
@@ -58,6 +67,7 @@ class IntroductionPage extends StatelessWidget {
           bodyTextStyle: DefaultTheme.textOnboarding,
           titleTextStyle: DefaultTheme.subtitle2Medium,
           imagePadding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
+          bodyPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
       PageViewModel(
@@ -83,6 +93,7 @@ class IntroductionPage extends StatelessWidget {
           bodyTextStyle: DefaultTheme.textOnboarding,
           titleTextStyle: DefaultTheme.subtitle2Medium,
           imagePadding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
+          bodyPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
       PageViewModel(
@@ -126,6 +137,7 @@ class IntroductionPage extends StatelessWidget {
           bodyTextStyle: DefaultTheme.textOnboarding,
           titleTextStyle: DefaultTheme.subtitle2Medium,
           imagePadding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
+          bodyPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
       PageViewModel(
@@ -145,6 +157,7 @@ class IntroductionPage extends StatelessWidget {
           bodyTextStyle: DefaultTheme.textOnboarding,
           titleTextStyle: DefaultTheme.subtitle2Medium,
           imagePadding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
+          bodyPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
       PageViewModel(
@@ -164,6 +177,7 @@ class IntroductionPage extends StatelessWidget {
           bodyTextStyle: DefaultTheme.textOnboarding,
           titleTextStyle: DefaultTheme.subtitle2Medium,
           imagePadding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
+          bodyPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
       PageViewModel(
@@ -183,6 +197,7 @@ class IntroductionPage extends StatelessWidget {
           bodyTextStyle: DefaultTheme.textOnboarding,
           titleTextStyle: DefaultTheme.subtitle2Medium,
           imagePadding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
+          bodyPadding: const EdgeInsets.symmetric(horizontal: 18),
         ),
       ),
       PageViewModel(
@@ -194,6 +209,7 @@ class IntroductionPage extends StatelessWidget {
           bodyTextStyle: DefaultTheme.textOnboarding,
           titleTextStyle: DefaultTheme.subtitle2Medium,
           imagePadding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
+          bodyPadding: const EdgeInsets.symmetric(horizontal: 18),
         ),
       ),
       PageViewModel(
@@ -202,29 +218,24 @@ class IntroductionPage extends StatelessWidget {
             "Pronto para explorar a PTMOL e proteger sua privacidade nas redes sociais?",
         body: "Comece sua jornada agora e mantenha seus ativos seguros!",
         decoration: PageDecoration(
+          bodyAlignment: Alignment.center,
           bodyTextStyle: DefaultTheme.textOnboarding,
-          titleTextStyle: DefaultTheme.subtitle2Medium,
+          titleTextStyle: DefaultTheme.subtitle2Medium.copyWith(
+            fontSize: 20,
+          ),
           imagePadding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
+          bodyPadding: const EdgeInsets.symmetric(horizontal: 18),
+          titlePadding: const EdgeInsets.all(16),
         ),
       ),
     ];
   }
 
-  const IntroductionPage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IntroductionScreen(
-        done: const Icon(
-          Icons.chevron_right_outlined,
-          size: 30,
-        ),
         pages: getPages(),
-        next: const Icon(
-          Icons.chevron_right_outlined,
-          size: 30,
-        ),
         onDone: () => Navigator.push(
           context,
           PageTransition(
@@ -233,19 +244,22 @@ class IntroductionPage extends StatelessWidget {
             duration: const Duration(milliseconds: 1000),
           ),
         ),
-        skip: Text("Pular", style: DefaultTheme.subtitleMedium),
         nextFlex: 2,
         dotsFlex: 6,
         skipOrBackFlex: 2,
         onSkip: () => Navigator.push(
           context,
-          PageTransition(
-            child: const FormularioPage(),
-            type: PageTransitionType.fade,
-            duration: const Duration(milliseconds: 1000),
+          MaterialPageRoute(
+            builder: (_) => const FormularioPage(),
           ),
         ),
+        showBackButton: false,
         showSkipButton: true,
+        skip: Text("Pular", style: DefaultTheme.subtitleMedium),
+        showDoneButton: true,
+        done: const Icon(Icons.chevron_right_outlined, size: 30),
+        showNextButton: true,
+        next: const Icon(Icons.chevron_right_outlined, size: 30),
       ),
     );
   }

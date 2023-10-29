@@ -7,14 +7,17 @@ class PtmolTextField extends StatelessWidget {
     super.key,
     required this.hintText,
     required this.maxLines,
+    this.controller,
   });
 
   final int maxLines;
   final String hintText;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: DefaultTheme.hintStyle,
@@ -30,6 +33,7 @@ class PtmolTextField extends StatelessWidget {
         ),
       ),
       maxLines: maxLines,
+      textInputAction: TextInputAction.done,
     );
   }
 }

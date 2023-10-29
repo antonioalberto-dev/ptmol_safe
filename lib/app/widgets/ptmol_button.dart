@@ -6,11 +6,11 @@ import '../../theme/colors/default_colors.dart';
 class PtmolButton extends StatelessWidget {
   const PtmolButton({
     super.key,
-    required this.function,
+    this.function,
     required this.label,
   });
 
-  final Function function;
+  final Function? function;
   final String label;
 
   @override
@@ -35,7 +35,7 @@ class PtmolButton extends StatelessWidget {
             },
           ),
         ),
-        onPressed: () => function,
+        onPressed: function?.call(),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
