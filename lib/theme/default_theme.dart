@@ -46,8 +46,8 @@ class DefaultTheme {
   );
 
   static TextStyle button = GoogleFonts.montserrat(
-    fontSize: 15,
-    fontWeight: FontWeight.bold,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
     height: 1.0,
   );
 }

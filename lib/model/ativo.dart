@@ -1,104 +1,67 @@
-import 'dart:convert';
+import 'package:ptmol/model/checkbox_model.dart';
 
 class Ativo {
-  final String ativo;
-  final String classificacao;
-  final List<String> ameacas;
-  final List<String> fontesVazamento;
-  final String usosMaciliciosos;
-  final Risco risco;
-  final String alertasPrevencao;
-  final String contramedidas;
+  String? ativo;
+  String? classificacao;
+  List<CheckboxModel>? ameacas;
+  List<CheckboxModel>? fontesVazamento;
+  String? usosMaciliciosos;
+  Risco? risco;
+  String? alertasPrevencao;
+  String? contramedidas;
 
-  Ativo({
-    required this.ativo,
-    required this.classificacao,
-    required this.ameacas,
-    required this.fontesVazamento,
-    required this.usosMaciliciosos,
-    required this.risco,
-    required this.alertasPrevencao,
-    required this.contramedidas,
-  });
+  Ativo(
+      {this.ativo,
+      this.classificacao,
+      this.ameacas,
+      this.fontesVazamento,
+      this.usosMaciliciosos,
+      this.risco,
+      this.alertasPrevencao,
+      this.contramedidas});
 
-  Ativo copyWith({
-    String? ativo,
-    String? classificacao,
-    List<String>? ameacas,
-    List<String>? fontesVazamento,
-    String? usosMaciliciosos,
-    Risco? risco,
-    String? alertasPrevencao,
-    String? contramedidas,
-  }) =>
-      Ativo(
-        ativo: ativo ?? this.ativo,
-        classificacao: classificacao ?? this.classificacao,
-        ameacas: ameacas ?? this.ameacas,
-        fontesVazamento: fontesVazamento ?? this.fontesVazamento,
-        usosMaciliciosos: usosMaciliciosos ?? this.usosMaciliciosos,
-        risco: risco ?? this.risco,
-        alertasPrevencao: alertasPrevencao ?? this.alertasPrevencao,
-        contramedidas: contramedidas ?? this.contramedidas,
-      );
+  Ativo.fromJson(Map<String, dynamic> json) {
+    ativo = json['ativo'];
+    classificacao = json['classificacao'];
+    ameacas = json['ameacas'].cast<String>();
+    fontesVazamento = json['fontesVazamento'].cast<String>();
+    usosMaciliciosos = json['usosMaciliciosos'];
+    risco = json['risco'] != null ? Risco.fromJson(json['risco']) : null;
+    alertasPrevencao = json['alertasPrevencao'];
+    contramedidas = json['contramedidas'];
+  }
 
-  factory Ativo.fromJson(String str) => Ativo.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Ativo.fromMap(Map<String, dynamic> json) => Ativo(
-        ativo: json["ativo"],
-        classificacao: json["classificacao"],
-        ameacas: List<String>.from(json["ameacas"].map((x) => x)),
-        fontesVazamento:
-            List<String>.from(json["fontesVazamento"].map((x) => x)),
-        usosMaciliciosos: json["usosMaciliciosos"],
-        risco: Risco.fromMap(json["risco"]),
-        alertasPrevencao: json["alertasPrevencao"],
-        contramedidas: json["contramedidas"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "ativo": ativo,
-        "classificacao": classificacao,
-        "ameacas": List<dynamic>.from(ameacas.map((x) => x)),
-        "fontesVazamento": List<dynamic>.from(fontesVazamento.map((x) => x)),
-        "usosMaciliciosos": usosMaciliciosos,
-        "risco": risco.toMap(),
-        "alertasPrevencao": alertasPrevencao,
-        "contramedidas": contramedidas,
-      };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['ativo'] = ativo;
+    data['classificacao'] = classificacao;
+    data['ameacas'] = ameacas;
+    data['fontesVazamento'] = fontesVazamento;
+    data['usosMaciliciosos'] = usosMaciliciosos;
+    if (risco != null) {
+      data['risco'] = risco!.toJson();
+    }
+    data['alertasPrevencao'] = alertasPrevencao;
+    data['contramedidas'] = contramedidas;
+    return data;
+  }
 }
 
 class Risco {
-  final String probabilidade;
-  final String gravidade;
+  String? probabilidade;
+  String? gravidade;
 
-  Risco({
-    required this.probabilidade,
-    required this.gravidade,
-  });
+  Risco({this.probabilidade, this.gravidade});
 
-  Risco copyWith({
-    String? probabilidade,
-    String? gravidade,
-  }) =>
-      Risco(
-        probabilidade: probabilidade ?? this.probabilidade,
-        gravidade: gravidade ?? this.gravidade,
-      );
+  Risco.fromJson(Map<String, dynamic> json) {
+    probabilidade = json['probabilidade'];
+    gravidade = json['gravidade'];
+  }
 
-  factory Risco.fromJson(String str) => Risco.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Risco.fromMap(Map<String, dynamic> json) => Risco(
-        probabilidade: json["probabilidade"],
-        gravidade: json["gravidade"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "probabilidade": probabilidade,
-        "gravidade": gravidade,
-      };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['probabilidade'] = probabilidade;
+    data['gravidade'] = gravidade;
+    return data;
+  }
 }
