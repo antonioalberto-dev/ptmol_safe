@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:ptmol/app/pages/ativo_detalhe_page.dart';
-import 'package:ptmol/app/pages/formulario_page.dart';
+import 'package:ptmol/app/pages/form_page.dart';
 import 'package:ptmol/theme/default_theme.dart';
 import 'package:ptmol/theme/ui_theme.dart';
 

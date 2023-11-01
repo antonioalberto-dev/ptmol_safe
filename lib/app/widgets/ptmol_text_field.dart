@@ -17,6 +17,14 @@ class PtmolTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      validator: (String? value) {
+        if (value == null) {
+          return "Informação necessária!";
+        }
+        if (value.isEmpty) {
+          return "Informação necessária!";
+        }
+      },
       controller: controller,
       decoration: InputDecoration(
         hintText: hintText,

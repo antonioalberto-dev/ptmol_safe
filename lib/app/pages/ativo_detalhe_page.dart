@@ -1,14 +1,29 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:ptmol/app/pages/form_page.dart';
 import 'package:ptmol/app/widgets/item_ameaca.dart';
 import 'package:ptmol/theme/ui_theme.dart';
 
 import '../../model/ativo.dart';
 
-class AtivoDetalhe extends StatelessWidget {
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
+import 'package:share_plus/share_plus.dart';
+
+class AtivoDetalhe extends StatefulWidget {
   const AtivoDetalhe({Key? key, required this.ativo}) : super(key: key);
 
   final Ativo ativo;
 
+  @override
+  State<AtivoDetalhe> createState() => _AtivoDetalheState();
+}
+
+class _AtivoDetalheState extends State<AtivoDetalhe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +61,7 @@ class AtivoDetalhe extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Center(
-                        child: Text(ativo.ativo?.toUpperCase() ?? "",
+                        child: Text(widget.ativo.ativo?.toUpperCase() ?? "",
                             style: DefaultTheme.titleLarge)),
                     const SizedBox(height: 15),
                     Row(
@@ -59,7 +74,7 @@ class AtivoDetalhe extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          ativo.classificacao ?? "",
+                          widget.ativo.classificacao ?? "",
                           style: DefaultTheme.text.copyWith(fontSize: 13),
                         ),
                       ],
@@ -69,7 +84,8 @@ class AtivoDetalhe extends StatelessWidget {
                       color: DefaultColors.primary[50],
                       margin: EdgeInsets.zero,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 7),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 7),
                         child: Column(
                           children: [
                             Text(
@@ -79,7 +95,7 @@ class AtivoDetalhe extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 3),
-                            ...?ativo.ameacas?.map((ameaca) {
+                            ...?widget.ativo.ameacas?.map((ameaca) {
                               if (ameaca.value != false) {
                                 return Row(
                                   children: [
@@ -88,7 +104,7 @@ class AtivoDetalhe extends StatelessWidget {
                                       size: 15,
                                       color: DefaultColors.primary[500],
                                     ),
-                                    SizedBox(width: 2),
+                                    const SizedBox(width: 2),
                                     Text(
                                       ameaca.title,
                                       style: DefaultTheme.text.copyWith(
@@ -105,17 +121,92 @@ class AtivoDetalhe extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    if (ativo.usosMaciliciosos != "")
+                    if (widget.ativo.usosMaciliciosos != "")
                       ItemAmeaca(
                         icon: Icons.policy_outlined,
                         title: "Usos maliciosos",
-                        text: ativo.usosMaciliciosos,
+                        text: widget.ativo.usosMaciliciosos,
                       ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.warning_amber_rounded,
+                              size: 17,
+                              color: DefaultColors.primary[500],
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              "Risco",
+                              style: DefaultTheme.subtitle2Medium.copyWith(
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 5,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    "Probabilidade",
+                                    style:
+                                        DefaultTheme.subtitle2Medium.copyWith(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    widget.ativo.risco?.probabilidade ?? "",
+                                    style: DefaultTheme.text.copyWith(
+                                      fontSize: 12,
+                                      color: DefaultColors.primary[500],
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Gravidade",
+                                    style:
+                                        DefaultTheme.subtitle2Medium.copyWith(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    widget.ativo.risco?.gravidade ?? "",
+                                    style: DefaultTheme.text.copyWith(
+                                      fontSize: 12,
+                                      color: DefaultColors.primary[500],
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
                     Card(
                       color: DefaultColors.primary[50],
                       margin: EdgeInsets.zero,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 7),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 7),
                         child: Column(
                           children: [
                             Text(
@@ -125,8 +216,8 @@ class AtivoDetalhe extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 3),
-                            ...?ativo.fontesVazamento?.map((ameaca) {
-                              if (ameaca.value != false) {
+                            ...?widget.ativo.fontesVazamento?.map((fonte) {
+                              if (fonte.value != false) {
                                 return Row(
                                   children: [
                                     Icon(
@@ -134,9 +225,9 @@ class AtivoDetalhe extends StatelessWidget {
                                       size: 15,
                                       color: DefaultColors.primary[500],
                                     ),
-                                    SizedBox(width: 2),
+                                    const SizedBox(width: 2),
                                     Text(
-                                      ameaca.title,
+                                      fonte.title,
                                       style: DefaultTheme.text.copyWith(
                                         fontSize: 12,
                                       ),
@@ -145,28 +236,95 @@ class AtivoDetalhe extends StatelessWidget {
                                 );
                               }
                               return const SizedBox(width: 0);
-                            }),
+                            }).toList(),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
-                    if (ativo.alertasPrevencao != "")
+                    if (widget.ativo.alertasPrevencao != "")
                       ItemAmeaca(
                         icon: Icons.notification_important_outlined,
                         title: "Alertas de prevenção",
-                        text: ativo.alertasPrevencao,
+                        text: widget.ativo.alertasPrevencao,
                       ),
-                    if (ativo.alertasPrevencao != "")
+                    if (widget.ativo.alertasPrevencao != "")
                       ItemAmeaca(
                         icon: Icons.gpp_good_outlined,
                         title: "Contramedida",
-                        text: ativo.contramedidas,
+                        text: widget.ativo.contramedidas,
                       ),
                   ],
                 ),
               ),
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30).copyWith(
+                top: 15,
+              ),
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const FormularioPage(),
+                        ),
+                      );
+                    },
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.resolveWith(
+                        (states) {
+                          if (states.contains(MaterialState.pressed)) {
+                            return Colors.white;
+                          }
+                          return Colors.white;
+                        },
+                      ),
+                      backgroundColor: MaterialStateProperty.resolveWith(
+                        (states) {
+                          if (states.contains(MaterialState.pressed)) {
+                            return DefaultColors.success;
+                          }
+                          return DefaultColors.success;
+                        },
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Iniciar nova inspeção",
+                        style: DefaultTheme.subtitleMedium.copyWith(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.picture_as_pdf_outlined,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            "Exportar dados",
+                            style: DefaultTheme.subtitleMedium.copyWith(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
