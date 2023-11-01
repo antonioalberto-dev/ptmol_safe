@@ -1,6 +1,6 @@
 class CheckboxModel {
   String title;
-  bool? value;
+  bool value;
 
   CheckboxModel({
     required this.title,

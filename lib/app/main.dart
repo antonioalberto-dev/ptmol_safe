@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ptmol/app/pages/introduction_page.dart';
+import 'package:ptmol/app/pages/onboading_page.dart';
 import 'package:ptmol/theme/colors/default_colors.dart';
-import 'package:ptmol/theme/default_theme.dart';
 
 void main() {
   runApp(const MyApp());

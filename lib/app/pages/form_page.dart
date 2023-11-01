@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ptmol/app/pages/ativo_detalhe_page.dart';
-import 'package:ptmol/app/pages/introduction_page.dart';
+import 'package:ptmol/app/pages/onboading_page.dart';
 import 'package:ptmol/theme/colors/default_colors.dart';
 
 import '../../model/ativo.dart';
@@ -56,6 +56,8 @@ class _MyHomePageState extends State<FormularioPage> {
   String? probabilidade;
   TextEditingController alertasController = TextEditingController();
   TextEditingController contramedidasController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +116,8 @@ class _MyHomePageState extends State<FormularioPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
                     onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const IntroductionPage()),
+                      MaterialPageRoute(
+                          builder: (_) => const IntroductionPage()),
                     ),
                     child: Row(
                       children: [
@@ -148,6 +151,7 @@ class _MyHomePageState extends State<FormularioPage> {
                     "Identifique os ativos, as ameaças e as contramedidas",
               ),
               Form(
+                key: _formKey,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Column(
@@ -399,25 +403,7 @@ class _MyHomePageState extends State<FormularioPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => AtivoDetalhe(
-                                ativo: Ativo(
-                                  ativo: ativoController.text,
-                                  classificacao: classificao,
-                                  usosMaciliciosos:
-                                      usosMaliciososController.text,
-                                  contramedidas: contramedidasController.text,
-                                  risco: Risco(
-                                      gravidade: gravidade,
-                                      probabilidade: probabilidade),
-                                  alertasPrevencao: alertasController.text,
-                                  ameacas: listAmeacas,
-                                  fontesVazamento: listFontesVazamento,
-                                ),
-                              ),
-                            ),
-                          );
+                          onClickFinally();
                         },
                         style: ButtonStyle(
                           foregroundColor: MaterialStateProperty.resolveWith(
@@ -457,7 +443,28 @@ class _MyHomePageState extends State<FormularioPage> {
 
   onClicked(CheckboxModel ckbItem) {
     setState(() {
-      ckbItem.value = !ckbItem.value!;
+      ckbItem.value = !ckbItem.value;
     });
+  }
+
+  onClickFinally() {
+    if (_formKey.currentState!.validate()) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => AtivoDetalhe(
+            ativo: Ativo(
+              ativo: ativoController.text,
+              classificacao: classificao,
+              usosMaciliciosos: usosMaliciososController.text,
+              contramedidas: contramedidasController.text,
+              risco: Risco(gravidade: gravidade, probabilidade: probabilidade),
+              alertasPrevencao: alertasController.text,
+              ameacas: listAmeacas,
+              fontesVazamento: listFontesVazamento,
+            ),
+          ),
+        ),
+      );
+    }
   }
 }
