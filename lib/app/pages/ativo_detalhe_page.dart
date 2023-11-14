@@ -1,21 +1,16 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:printing/printing.dart';
 import 'package:ptmol/app/pages/form_page.dart';
 import 'package:ptmol/app/widgets/item_ameaca.dart';
 import 'package:ptmol/theme/ui_theme.dart';
 
-import '../../model/ativo.dart';
-
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
-import 'package:share_plus/share_plus.dart';
+
+import '../../model/ativo.dart';
 
 class AtivoDetalhe extends StatefulWidget {
-  const AtivoDetalhe({Key? key, required this.ativo}) : super(key: key);
+  const AtivoDetalhe({super.key, required this.ativo});
 
   final Ativo ativo;
 
@@ -32,7 +27,7 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: DefaultColors.primary[500],
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             Text(
@@ -64,20 +59,24 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
                         child: Text(widget.ativo.ativo?.toUpperCase() ?? "",
                             style: DefaultTheme.titleLarge)),
                     const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Classificação",
-                          style: DefaultTheme.subtitle2Medium.copyWith(
-                            fontSize: 13,
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Classificação",
+                            style: DefaultTheme.subtitle2Medium.copyWith(
+                              fontSize: 13,
+                            ),
                           ),
-                        ),
-                        Text(
-                          widget.ativo.classificacao ?? "",
-                          style: DefaultTheme.text.copyWith(fontSize: 13),
-                        ),
-                      ],
+                          const SizedBox(width: 5),
+                          Text(
+                            widget.ativo.classificacao ?? "",
+                            style: DefaultTheme.text.copyWith(fontSize: 13),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Card(
@@ -236,7 +235,7 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
                                 );
                               }
                               return const SizedBox(width: 0);
-                            }).toList(),
+                            }),
                           ],
                         ),
                       ),
@@ -261,6 +260,7 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30).copyWith(
                 top: 15,
+                bottom: 40,
               ),
               child: Column(
                 children: [
@@ -301,7 +301,7 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => printDoc(),
                     child: Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -328,6 +328,50 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> printDoc() async {
+    final doc = pw.Document();
+    final styleTitulo = pw.TextStyle(fontWeight: pw.FontWeight.bold);
+    doc.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Container(
+            padding: const pw.EdgeInsets.all(20),
+            child: pw.Column(
+              mainAxisAlignment: pw.MainAxisAlignment.start,
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
+              children: [
+                pw.Center(
+                  child: pw.Text(
+                    widget.ativo.ativo?.toUpperCase() ?? "",
+                    style: styleTitulo.copyWith(fontSize: 18),
+                  ),
+                ),
+                pw.SizedBox(height: 15),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                  children: [
+                    pw.Text(
+                      "Classificação",
+                      style: styleTitulo,
+                    ),
+                    pw.SizedBox(width: 15),
+                    pw.Text(
+                      widget.ativo.classificacao ?? "",
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat pdf) async => doc.save(),
     );
   }
 }
