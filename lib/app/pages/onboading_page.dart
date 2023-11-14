@@ -3,8 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:ptmol/app/pages/ativo_detalhe_page.dart';
 import 'package:ptmol/app/pages/form_page.dart';
 import 'package:ptmol/theme/default_theme.dart';
 import 'package:ptmol/theme/ui_theme.dart';
@@ -238,11 +236,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
         pages: getPages(),
         onDone: () => Navigator.push(
           context,
-          PageTransition(
-            child: const FormularioPage(),
-            type: PageTransitionType.fade,
-            duration: const Duration(milliseconds: 1000),
-          ),
+          MaterialPageRoute(builder: (_) => const FormularioPage()),
         ),
         nextFlex: 2,
         dotsFlex: 6,
