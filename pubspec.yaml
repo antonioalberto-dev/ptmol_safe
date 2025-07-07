@@ -1,12 +1,13 @@
 name: ptmol
 description: PTMOL Safe
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0-276.0.dev <4.0.0'
+  sdk: '>=3.2.0 <4.0.0'
+  flutter: ">=3.16.0"
 
 dependencies:
   flutter:
@@ -18,13 +19,13 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   introduction_screen: ^3.1.12
   flutter_svg: ^2.0.9
-  shared_preferences: ^2.2.2
-  share_plus: ^7.2.1
-  pdf: ^3.1.0
-  path_provider: ^2.0.1
-  open_file: ^3.1.0
+  shared_preferences: ^2.5.3
+  share_plus: ^11.0.0
+  pdf: ^3.11.2
+  path_provider: ^2.1.5
+  open_file: ^3.5.10
   intl: ^0.18.0
-  printing: ^5.9.3
+  printing: ^5.14.2
 
 flutter_native_splash:
   color: "#7c00de"
