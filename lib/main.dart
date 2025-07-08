@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:ptmol/app/pages/onboading_page.dart';
+import 'package:ptmol/app_module.dart';
+import 'package:ptmol/app_widget.dart';
 import 'package:ptmol/theme/colors/default_colors.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ModularApp(module: AppModule(), child: const AppWidget()));
 }
 
 class MyApp extends StatelessWidget {
