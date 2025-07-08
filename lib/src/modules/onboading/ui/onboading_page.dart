@@ -1,20 +1,18 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:ptmol/app/pages/form_page.dart';
 import 'package:ptmol/theme/default_theme.dart';
 import 'package:ptmol/theme/ui_theme.dart';
 
-class IntroductionPage extends StatefulWidget {
-  const IntroductionPage({Key? key}) : super(key: key);
+class OnboardingPage extends StatefulWidget {
+  const OnboardingPage({super.key});
 
   @override
-  State<IntroductionPage> createState() => _IntroductionPageState();
+  State<OnboardingPage> createState() => _OnboardingPageState();
 }
 
-class _IntroductionPageState extends State<IntroductionPage> {
+class _OnboardingPageState extends State<OnboardingPage> {
   List<PageViewModel> getPages() {
     return [
       PageViewModel(
@@ -234,19 +232,11 @@ class _IntroductionPageState extends State<IntroductionPage> {
     return Scaffold(
       body: IntroductionScreen(
         pages: getPages(),
-        onDone: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const FormularioPage()),
-        ),
+        onDone: () => Modular.to.pushNamed('/form/'),
         nextFlex: 2,
         dotsFlex: 6,
         skipOrBackFlex: 2,
-        onSkip: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const FormularioPage(),
-          ),
-        ),
+        onSkip: () => Modular.to.pushNamed('/form/'),
         showBackButton: false,
         showSkipButton: true,
         skip: Text("Pular", style: DefaultTheme.subtitleMedium),
