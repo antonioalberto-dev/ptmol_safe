@@ -1,26 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:printing/printing.dart';
-import 'package:ptmol/app/pages/form_page.dart';
-import 'package:ptmol/app/widgets/item_ameaca.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:get/get.dart';
+import 'package:ptmol/src/modules/details/ui/widgets/item_ameaca.dart';
+import 'package:ptmol/src/modules/details/viewmodel/details_viewmodel.dart';
 import 'package:ptmol/theme/ui_theme.dart';
 
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
+class DetailsPage extends StatelessWidget {
+  const DetailsPage({super.key});
 
-import '../../model/ativo.dart';
-
-class AtivoDetalhe extends StatefulWidget {
-  const AtivoDetalhe({super.key, required this.ativo});
-
-  final Ativo ativo;
-
-  @override
-  State<AtivoDetalhe> createState() => _AtivoDetalheState();
-}
-
-class _AtivoDetalheState extends State<AtivoDetalhe> {
   @override
   Widget build(BuildContext context) {
+    return GetBuilder<DetailsViewmodel>(
+      init: DetailsViewmodel(),
+      builder: (viewModel) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: DefaultColors.primary[500],
@@ -56,7 +48,7 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Center(
-                        child: Text(widget.ativo.ativo?.toUpperCase() ?? "",
+                        child: Text(viewModel.nomeAtivo.toUpperCase(),
                             style: DefaultTheme.titleLarge)),
                     const SizedBox(height: 15),
                     SingleChildScrollView(
@@ -72,7 +64,7 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            widget.ativo.classificacao ?? "",
+                            viewModel.classificacao,
                             style: DefaultTheme.text.copyWith(fontSize: 13),
                           ),
                         ],
@@ -94,37 +86,34 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
                               ),
                             ),
                             const SizedBox(height: 3),
-                            ...?widget.ativo.ameacas?.map((ameaca) {
-                              if (ameaca.value != false) {
-                                return Row(
-                                  children: [
-                                    Icon(
-                                      Icons.chevron_right_outlined,
-                                      size: 15,
-                                      color: DefaultColors.primary[500],
+                            ...viewModel.ameacasSelecionadas.map((ameaca) {
+                              return Row(
+                                children: [
+                                  Icon(
+                                    Icons.chevron_right_outlined,
+                                    size: 15,
+                                    color: DefaultColors.primary[500],
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    ameaca.title,
+                                    style: DefaultTheme.text.copyWith(
+                                      fontSize: 12,
                                     ),
-                                    const SizedBox(width: 2),
-                                    Text(
-                                      ameaca.title,
-                                      style: DefaultTheme.text.copyWith(
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }
-                              return const SizedBox(width: 0);
+                                  ),
+                                ],
+                              );
                             }),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
-                    if (widget.ativo.usosMaciliciosos != "")
+                    if (viewModel.hasUsosMaliciosos)
                       ItemAmeaca(
                         icon: Icons.policy_outlined,
                         title: "Usos maliciosos",
-                        text: widget.ativo.usosMaciliciosos,
+                        text: viewModel.usosMaliciosos,
                       ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +155,7 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
                                   ),
                                   const SizedBox(width: 5),
                                   Text(
-                                    widget.ativo.risco?.probabilidade ?? "",
+                                    viewModel.probabilidade,
                                     style: DefaultTheme.text.copyWith(
                                       fontSize: 12,
                                       color: DefaultColors.primary[500],
@@ -186,7 +175,7 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
                                   ),
                                   const SizedBox(width: 5),
                                   Text(
-                                    widget.ativo.risco?.gravidade ?? "",
+                                    viewModel.gravidade,
                                     style: DefaultTheme.text.copyWith(
                                       fontSize: 12,
                                       color: DefaultColors.primary[500],
@@ -215,43 +204,40 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
                               ),
                             ),
                             const SizedBox(height: 3),
-                            ...?widget.ativo.fontesVazamento?.map((fonte) {
-                              if (fonte.value != false) {
-                                return Row(
-                                  children: [
-                                    Icon(
-                                      Icons.chevron_right_outlined,
-                                      size: 15,
-                                      color: DefaultColors.primary[500],
+                            ...viewModel.fontesSelecionadas.map((fonte) {
+                              return Row(
+                                children: [
+                                  Icon(
+                                    Icons.chevron_right_outlined,
+                                    size: 15,
+                                    color: DefaultColors.primary[500],
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    fonte.title,
+                                    style: DefaultTheme.text.copyWith(
+                                      fontSize: 12,
                                     ),
-                                    const SizedBox(width: 2),
-                                    Text(
-                                      fonte.title,
-                                      style: DefaultTheme.text.copyWith(
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }
-                              return const SizedBox(width: 0);
+                                  ),
+                                ],
+                              );
                             }),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
-                    if (widget.ativo.alertasPrevencao != "")
+                    if (viewModel.hasAlertasPrevencao)
                       ItemAmeaca(
                         icon: Icons.notification_important_outlined,
                         title: "Alertas de prevenção",
-                        text: widget.ativo.alertasPrevencao,
+                        text: viewModel.alertasPrevencao,
                       ),
-                    if (widget.ativo.alertasPrevencao != "")
+                    if (viewModel.hasContramedidas)
                       ItemAmeaca(
                         icon: Icons.gpp_good_outlined,
                         title: "Contramedida",
-                        text: widget.ativo.contramedidas,
+                        text: viewModel.contramedidas,
                       ),
                   ],
                 ),
@@ -265,25 +251,19 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
               child: Column(
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const FormularioPage(),
-                        ),
-                      );
-                    },
+                    onPressed: () => Modular.to.pushNamed('/form/'),
                     style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.resolveWith(
+                      foregroundColor: WidgetStateProperty.resolveWith(
                         (states) {
-                          if (states.contains(MaterialState.pressed)) {
+                          if (states.contains(WidgetState.pressed)) {
                             return Colors.white;
                           }
                           return Colors.white;
                         },
                       ),
-                      backgroundColor: MaterialStateProperty.resolveWith(
+                      backgroundColor: WidgetStateProperty.resolveWith(
                         (states) {
-                          if (states.contains(MaterialState.pressed)) {
+                          if (states.contains(WidgetState.pressed)) {
                             return DefaultColors.success;
                           }
                           return DefaultColors.success;
@@ -299,9 +279,8 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
                         ),
                       ),
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => printDoc(),
+                  ),                    ElevatedButton(
+                      onPressed: () => viewModel.printDoc(),
                     child: Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -328,50 +307,8 @@ class _AtivoDetalheState extends State<AtivoDetalhe> {
           ],
         ),
       ),
-    );
-  }
-
-  Future<void> printDoc() async {
-    final doc = pw.Document();
-    final styleTitulo = pw.TextStyle(fontWeight: pw.FontWeight.bold);
-    doc.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) {
-          return pw.Container(
-            padding: const pw.EdgeInsets.all(20),
-            child: pw.Column(
-              mainAxisAlignment: pw.MainAxisAlignment.start,
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
-              children: [
-                pw.Center(
-                  child: pw.Text(
-                    widget.ativo.ativo?.toUpperCase() ?? "",
-                    style: styleTitulo.copyWith(fontSize: 18),
-                  ),
-                ),
-                pw.SizedBox(height: 15),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.center,
-                  children: [
-                    pw.Text(
-                      "Classificação",
-                      style: styleTitulo,
-                    ),
-                    pw.SizedBox(width: 15),
-                    pw.Text(
-                      widget.ativo.classificacao ?? "",
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat pdf) async => doc.save(),
+      );
+      }
     );
   }
 }

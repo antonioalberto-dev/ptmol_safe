@@ -1,67 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:ptmol/app/pages/ativo_detalhe_page.dart';
-import 'package:ptmol/app/pages/onboading_page.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:get/get.dart';
+import 'package:ptmol/src/modules/details/viewmodel/details_viewmodel.dart';
+import 'package:ptmol/src/modules/form/viewmodel/form_viewmodel.dart';
 import 'package:ptmol/theme/colors/default_colors.dart';
 
-import '../../model/ativo.dart';
-import '../../model/checkbox_model.dart';
-import '../../theme/default_theme.dart';
-import '../widgets/header_form.dart';
-import '../widgets/item_formulario.dart';
-import '../widgets/ptmol_text_field.dart';
+import '../../../../theme/default_theme.dart';
+import 'widgets/header_form.dart';
+import 'widgets/item_formulario.dart';
+import 'widgets/ptmol_text_field.dart';
 
-class FormularioPage extends StatefulWidget {
-  const FormularioPage({super.key});
-
-  @override
-  State<FormularioPage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<FormularioPage> {
-  final listFontesVazamento = [
-    CheckboxModel(title: "Membro malicioso"),
-    CheckboxModel(title: "Provedor de serviço"),
-    CheckboxModel(title: "Aplicativo terceirizado"),
-    CheckboxModel(title: "Fontes externas"),
-  ];
-  final listAmeacas = [
-    CheckboxModel(title: "Cyberstalking"),
-    CheckboxModel(title: "Divulgação de Informação"),
-    CheckboxModel(title: "Ameaça a reputação"),
-    CheckboxModel(title: "Rastreamento e Inferência de Dados"),
-    CheckboxModel(title: "Clonagem de perfil"),
-    CheckboxModel(title: "Roubo de identidade"),
-    CheckboxModel(title: "Reconhecimento facial"),
-    CheckboxModel(title: "Espionagem"),
-    CheckboxModel(title: "Gravação não autorizada"),
-  ];
-  final dropValueClassificacao = ValueNotifier('');
-  final dropOpcoesClassificacao = [
-    "Textual",
-    "Multimídia",
-    "Geográfico",
-    "Dados de uso",
-    "Dados de relacionamento",
-  ];
-  final dropValueProbabilidade = ValueNotifier('');
-  final dropValueGravidade = ValueNotifier('');
-  final dropValueRiscos = ["Alta", "Média", "Baixa"];
-
-  List<String> ameacas = [];
-
-  TextEditingController ativoController = TextEditingController();
-  String? classificao;
-  TextEditingController usosMaliciososController = TextEditingController();
-  String? gravidade;
-  String? probabilidade;
-  TextEditingController alertasController = TextEditingController();
-  TextEditingController contramedidasController = TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
+class FormPage extends StatelessWidget {
+  const FormPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var widthRisk = MediaQuery.of(context).size.width * 0.42;
+    return GetBuilder<FormViewmodel>(
+      init: FormViewmodel(),
+      builder: (viewModel) {
+        var widthRisk = MediaQuery.of(context).size.width * 0.42;
     return Scaffold(
       drawer: Drawer(
         child: Column(
@@ -85,9 +42,7 @@ class _MyHomePageState extends State<FormularioPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const FormularioPage()),
-                    ),
+                    onTap: () => Modular.to.pushNamed('/form/'),
                     child: Row(
                       children: [
                         const Icon(Icons.home_outlined),
@@ -115,10 +70,7 @@ class _MyHomePageState extends State<FormularioPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (_) => const IntroductionPage()),
-                    ),
+                    onTap: () => Modular.to.pushNamed('/onboarding/'),
                     child: Row(
                       children: [
                         const Icon(Icons.library_books_outlined),
@@ -151,7 +103,7 @@ class _MyHomePageState extends State<FormularioPage> {
                     "Identifique os ativos, as ameaças e as contramedidas",
               ),
               Form(
-                key: _formKey,
+                key: viewModel.formKey,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Column(
@@ -162,13 +114,13 @@ class _MyHomePageState extends State<FormularioPage> {
                         item: PtmolTextField(
                           hintText: "O que deve ser protegido?",
                           maxLines: 1,
-                          controller: ativoController,
+                          controller: viewModel.ativoController,
                         ),
                       ),
                       ItemFormulario(
                         labelText: "Classificação",
                         item: ValueListenableBuilder(
-                            valueListenable: dropValueClassificacao,
+                            valueListenable: viewModel.dropValueClassificacao,
                             builder: (BuildContext context, String value, _) {
                               return DropdownButtonFormField(
                                 decoration: InputDecoration(
@@ -188,11 +140,9 @@ class _MyHomePageState extends State<FormularioPage> {
                                     style: DefaultTheme.hintStyle),
                                 value: (value.isEmpty) ? null : value,
                                 onChanged: (escolha) {
-                                  dropValueClassificacao.value =
-                                      escolha.toString();
-                                  classificao = escolha.toString();
+                                  viewModel.setClassificacao(escolha);
                                 },
-                                items: dropOpcoesClassificacao
+                                items: viewModel.dropOpcoesClassificacao
                                     .map((opcao) => DropdownMenuItem(
                                           value: opcao,
                                           child: Text(
@@ -210,7 +160,7 @@ class _MyHomePageState extends State<FormularioPage> {
                         labelText: "Selecione as ameaças",
                         item: Column(
                           children: [
-                            ...listAmeacas.map(
+                            ...viewModel.listAmeacas.map(
                               (item) => CheckboxListTile(
                                 dense: true,
                                 contentPadding: EdgeInsets.zero,
@@ -219,7 +169,7 @@ class _MyHomePageState extends State<FormularioPage> {
                                 checkboxShape: const CircleBorder(),
                                 value: item.value,
                                 activeColor: DefaultColors.primary[500],
-                                onChanged: (value) => onClicked(item),
+                                onChanged: (value) => viewModel.onCheckboxClicked(item),
                                 title: Text(
                                   item.title,
                                   style: DefaultTheme.text,
@@ -233,7 +183,7 @@ class _MyHomePageState extends State<FormularioPage> {
                         labelText: "Fonte de vazamento",
                         item: Column(
                           children: [
-                            ...listFontesVazamento.map(
+                            ...viewModel.listFontesVazamento.map(
                               (item) => CheckboxListTile(
                                 dense: true,
                                 contentPadding: EdgeInsets.zero,
@@ -242,7 +192,7 @@ class _MyHomePageState extends State<FormularioPage> {
                                 checkboxShape: const CircleBorder(),
                                 value: item.value,
                                 activeColor: DefaultColors.primary[500],
-                                onChanged: (value) => onClicked(item),
+                                onChanged: (value) => viewModel.onCheckboxClicked(item),
                                 title: Text(
                                   item.title,
                                   style: DefaultTheme.text,
@@ -258,7 +208,7 @@ class _MyHomePageState extends State<FormularioPage> {
                           hintText:
                               "O que pode afetar a privacidade do usuário? ",
                           maxLines: 3,
-                          controller: usosMaliciososController,
+                          controller: viewModel.usosMaliciososController,
                         ),
                       ),
                       ItemFormulario(
@@ -267,7 +217,7 @@ class _MyHomePageState extends State<FormularioPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             ValueListenableBuilder(
-                              valueListenable: dropValueProbabilidade,
+                              valueListenable: viewModel.dropValueProbabilidade,
                               builder: (BuildContext context, String value, _) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,11 +250,9 @@ class _MyHomePageState extends State<FormularioPage> {
                                             style: DefaultTheme.hintStyle),
                                         value: (value.isEmpty) ? null : value,
                                         onChanged: (escolha) {
-                                          dropValueProbabilidade.value =
-                                              escolha.toString();
-                                          probabilidade = escolha;
+                                          viewModel.setProbabilidade(escolha);
                                         },
-                                        items: dropValueRiscos
+                                        items: viewModel.dropValueRiscos
                                             .map((opcao) => DropdownMenuItem(
                                                   value: opcao,
                                                   child: Text(
@@ -324,7 +272,7 @@ class _MyHomePageState extends State<FormularioPage> {
                               },
                             ),
                             ValueListenableBuilder(
-                              valueListenable: dropValueGravidade,
+                              valueListenable: viewModel.dropValueGravidade,
                               builder: (BuildContext context, String value, _) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,11 +305,9 @@ class _MyHomePageState extends State<FormularioPage> {
                                             style: DefaultTheme.hintStyle),
                                         value: (value.isEmpty) ? null : value,
                                         onChanged: (escolha) {
-                                          dropValueGravidade.value =
-                                              escolha.toString();
-                                          gravidade = escolha;
+                                          viewModel.setGravidade(escolha);
                                         },
-                                        items: dropValueRiscos
+                                        items: viewModel.dropValueRiscos
                                             .map((opcao) => DropdownMenuItem(
                                                   value: opcao,
                                                   child: Text(
@@ -389,7 +335,7 @@ class _MyHomePageState extends State<FormularioPage> {
                           hintText:
                               "Que alerta poderia ser emitido para informar o usuário sobre consequências para a sua privacidade?",
                           maxLines: 3,
-                          controller: alertasController,
+                          controller: viewModel.alertasController,
                         ),
                       ),
                       ItemFormulario(
@@ -398,25 +344,33 @@ class _MyHomePageState extends State<FormularioPage> {
                           hintText:
                               "Qual estratégia adotar para mitigar as ameaças?",
                           maxLines: 3,
-                          controller: contramedidasController,
+                          controller: viewModel.contramedidasController,
                         ),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          onClickFinally();
+                          if (viewModel.validateForm()) {
+                            // Obter ou criar instância do DetailsViewmodel
+                            final detailsViewModel = Get.put(DetailsViewmodel());
+                            
+                            // Passar os dados do formulário para o DetailsViewmodel
+                            detailsViewModel.setAtivo(viewModel.getAtivoFromForm());
+                            
+                            Modular.to.pushNamed('/details/');
+                          }
                         },
                         style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.resolveWith(
+                          foregroundColor: WidgetStateProperty.resolveWith(
                             (states) {
-                              if (states.contains(MaterialState.pressed)) {
+                              if (states.contains(WidgetState.pressed)) {
                                 return Colors.white;
                               }
                               return Colors.white;
                             },
                           ),
-                          backgroundColor: MaterialStateProperty.resolveWith(
+                          backgroundColor: WidgetStateProperty.resolveWith(
                             (states) {
-                              if (states.contains(MaterialState.pressed)) {
+                              if (states.contains(WidgetState.pressed)) {
                                 return DefaultColors.success;
                               }
                               return DefaultColors.success;
@@ -437,34 +391,9 @@ class _MyHomePageState extends State<FormularioPage> {
             ],
           ),
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
-  }
-
-  onClicked(CheckboxModel ckbItem) {
-    setState(() {
-      ckbItem.value = !ckbItem.value;
-    });
-  }
-
-  onClickFinally() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => AtivoDetalhe(
-            ativo: Ativo(
-              ativo: ativoController.text,
-              classificacao: classificao,
-              usosMaciliciosos: usosMaliciososController.text,
-              contramedidas: contramedidasController.text,
-              risco: Risco(gravidade: gravidade, probabilidade: probabilidade),
-              alertasPrevencao: alertasController.text,
-              ameacas: listAmeacas,
-              fontesVazamento: listFontesVazamento,
-            ),
-          ),
-        ),
-      );
-    }
+      },
+    );
   }
 }

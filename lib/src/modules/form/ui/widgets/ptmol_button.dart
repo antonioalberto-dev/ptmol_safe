@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ptmol/theme/default_theme.dart';
 
-import '../../theme/colors/default_colors.dart';
+import '../../../../../theme/colors/default_colors.dart';
 
 class PtmolButton extends StatelessWidget {
   const PtmolButton({

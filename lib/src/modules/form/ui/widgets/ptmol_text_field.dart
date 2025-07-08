@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../theme/default_theme.dart';
+import '../../../../../theme/default_theme.dart';
 
 class PtmolTextField extends StatelessWidget {
   const PtmolTextField({
@@ -24,6 +24,7 @@ class PtmolTextField extends StatelessWidget {
         if (value.isEmpty) {
           return "Informação necessária!";
         }
+        return null;
       },
       controller: controller,
       decoration: InputDecoration(

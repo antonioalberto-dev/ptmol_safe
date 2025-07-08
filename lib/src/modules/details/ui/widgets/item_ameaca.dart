@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../theme/colors/default_colors.dart';
-import '../../theme/default_theme.dart';
+import '../../../../../theme/colors/default_colors.dart';
+import '../../../../../theme/default_theme.dart';
 
 class ItemAmeaca extends StatelessWidget {
   const ItemAmeaca({
-    Key? key,
+    super.key,
     this.text,
     this.title,
     required this.icon,
-  }) : super(key: key);
+  });
 
   final String? text;
   final String? title;

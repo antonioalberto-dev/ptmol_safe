@@ -1,4 +1,4 @@
-import 'package:ptmol/model/checkbox_model.dart';
+import 'package:ptmol/src/modules/form/data/models/checkbox_model.dart';
 
 class Ativo {
   String? ativo;
