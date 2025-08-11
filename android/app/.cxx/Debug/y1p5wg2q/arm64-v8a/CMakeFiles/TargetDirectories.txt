@@ -1,0 +1,2 @@
+C:/workspace/ptmol_safe/android/app/.cxx/Debug/y1p5wg2q/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/workspace/ptmol_safe/android/app/.cxx/Debug/y1p5wg2q/arm64-v8a/CMakeFiles/rebuild_cache.dir
