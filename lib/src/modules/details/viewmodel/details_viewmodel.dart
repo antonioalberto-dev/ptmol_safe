@@ -1,9 +1,13 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:ptmol/src/modules/form/data/models/ativo.dart';
 import 'package:ptmol/src/modules/form/data/models/checkbox_model.dart';
-import 'package:printing/printing.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class DetailsViewmodel extends GetxController {
   // Dados do ativo preenchidos no formulário
@@ -76,70 +80,36 @@ class DetailsViewmodel extends GetxController {
     update();
   }
 
-  // Método para gerar PDF
-  Future<void> printDoc() async {
-    final doc = pw.Document();
-    final styleTitulo = pw.TextStyle(fontWeight: pw.FontWeight.bold);
-    
-    doc.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) {
-          return pw.Padding(
-            padding: const pw.EdgeInsets.all(20),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Center(
-                  child: pw.Text(
-                    "MODELO DE AMEAÇAS",
-                    style: styleTitulo.copyWith(fontSize: 20),
-                  ),
-                ),
-                pw.SizedBox(height: 20),
-                pw.Text("Ativo: ${nomeAtivo}", style: styleTitulo),
-                pw.SizedBox(height: 10),
-                pw.Text("Classificação: $classificacao"),
-                pw.SizedBox(height: 10),
-                if (hasUsosMaliciosos) ...[
-                  pw.Text("Usos maliciosos:", style: styleTitulo),
-                  pw.Text(usosMaliciosos),
-                  pw.SizedBox(height: 10),
-                ],
-                if (hasRisco) ...[
-                  pw.Text("Risco:", style: styleTitulo),
-                  pw.Text("Probabilidade: $probabilidade"),
-                  pw.Text("Gravidade: $gravidade"),
-                  pw.SizedBox(height: 10),
-                ],
-                if (hasAmeacas) ...[
-                  pw.Text("Ameaças de privacidade:", style: styleTitulo),
-                  ...ameacasSelecionadas.map((ameaca) => pw.Text("• ${ameaca.title}")),
-                  pw.SizedBox(height: 10),
-                ],
-                if (hasFontes) ...[
-                  pw.Text("Fontes de vazamento:", style: styleTitulo),
-                  ...fontesSelecionadas.map((fonte) => pw.Text("• ${fonte.title}")),
-                  pw.SizedBox(height: 10),
-                ],
-                if (hasAlertasPrevencao) ...[
-                  pw.Text("Alertas de prevenção:", style: styleTitulo),
-                  pw.Text(alertasPrevencao),
-                  pw.SizedBox(height: 10),
-                ],
-                if (hasContramedidas) ...[
-                  pw.Text("Contramedidas:", style: styleTitulo),
-                  pw.Text(contramedidas),
-                ],
-              ],
-            ),
-          );
-        },
-      ),
-    );
+  // Método para exportar como imagem
+  Future<void> exportAsImage(GlobalKey repaintBoundaryKey) async {
+    try {
+      // Captura o widget como imagem
+      RenderRepaintBoundary boundary = repaintBoundaryKey.currentContext!
+          .findRenderObject() as RenderRepaintBoundary;
+      
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => doc.save(),
-    );
+      // Salva a imagem temporariamente
+      final directory = await getTemporaryDirectory();
+      final imagePath = '${directory.path}/modelo_ameacas_${DateTime.now().millisecondsSinceEpoch}.png';
+      final file = File(imagePath);
+      await file.writeAsBytes(pngBytes);
+
+      // Compartilha a imagem
+      await Share.shareXFiles(
+        [XFile(imagePath)],
+        text: 'Modelo de Ameaças - ${nomeAtivo}',
+      );
+    } catch (e) {
+      print('Erro ao exportar imagem: $e');
+      Get.snackbar(
+        'Erro',
+        'Não foi possível exportar a imagem',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
   }
 }
